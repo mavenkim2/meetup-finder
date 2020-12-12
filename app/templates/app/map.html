@@ -1,0 +1,68 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <head>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbcslruZ5Mdsa9QcmcgC50JdRLCyQIZc4&callback=initMap&libraries=&v=weekly"
+                defer
+        ></script>
+        <style type="text/css">
+            /* Always set the map height explicitly to define the size of the div
+             * element that contains the map. */
+            #map {
+                height: 80%;
+                width: 100%;
+            }
+        </style>
+        <script>
+            event_address = '{{ event.location }}'
+            if (event_address) {
+                function initMap() {
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 15,
+                        center: {lat: 0, lng: 0},
+                    });
+                    const geocoder = new google.maps.Geocoder();
+                    geocodeAddress(geocoder, map);
+
+                }
+            }
+
+
+            function geocodeAddress(geocoder, resultsMap) {
+                geocoder.geocode({address: event_address}, (results, status) => {
+                    if (status === "OK") {
+                        resultsMap.setCenter(results[0].geometry.location);
+                        new google.maps.Marker({
+                            map: resultsMap,
+                            position: results[0].geometry.location,
+                        });
+                    } else {
+                        resultsMap.delete()
+                        //alert(
+                        //"Geocode was not successful for the following reason: " + status
+                        //);
+                    }
+                });
+            }
+        </script>
+
+    </head>
+    <body>
+    <br>
+    <div class="container">
+        {% if event.location %}
+            <div id='map'></div>
+        {% else %}
+            <p class="text-center">Geolocation not found.</p>
+        {% endif %}
+        <br>
+        <a href="{% url 'app:event_detail' event.pk %}"
+           class="btn btn-primary">
+            Go Back
+        </a>
+    </div>
+    </body>
+
+{% endblock %}

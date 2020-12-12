@@ -1,0 +1,7 @@
+Django
+gunicorn
+django-allauth
+dj-database-url
+psycopg2-binary==2.8.6
+django-crispy-forms==1.9.2
+Pillow==8.0.1

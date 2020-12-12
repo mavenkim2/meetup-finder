@@ -1,0 +1,66 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 15vw;
+            object-fit: cover;
+        }
+        .card-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <body>
+    <br>
+    {% if not user.is_authenticated %}
+        <p class=text-center>Please <a href="/accounts/google/login/?process=login">login</a> to post, create, and register for events.</p>
+    {% endif %}
+
+    <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+        <form method="GET" action="{% url 'app:search' %}">
+            <div class="row">
+                <div class="col-md-9 mb-2 mb-md-0">
+                    <input type="search" name = "q" class="form-control form-control-lg" placeholder="Search by Date, Location, or Title" aria-label="Search">
+                </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <button type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top:0">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if events %}
+        <div class="container">
+            <div class="row">
+                {% for event in events %}
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            {% if event.image %}
+                                <img class="card-img-top" src="{{ event.image.url }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="card-text">{{ event.info }}</p>
+                                <a href="{% url 'app:event_detail' event.pk %}"
+                                   class="btn btn-primary">
+                                    Read More
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <p class="text-center">No events matched the search.</p>
+    {% endif %}
+    </body>
+{% endblock %}
